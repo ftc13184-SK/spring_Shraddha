@@ -1,8 +1,9 @@
 package com.nighthawk.spring_portfolio.mvc.lightboard;
 
+import java.util.Scanner;
 import lombok.Data;
 
-@Data  // Annotations to simplify writing code (ie constructors, setters)
+@Data // Annotations to simplify writing code (ie constructors, setters)
 public class LightBoard {
     private Light[][] lights;
 
@@ -12,67 +13,67 @@ public class LightBoard {
         // 2D array nested loops, used for initialization
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
-                lights[row][col] = new Light();  // each cell needs to be constructed
+                lights[row][col] = new Light(); // each cell needs to be constructed
             }
         }
     }
 
     /* Output is intended for API key/values */
-    public String toString() { 
+    public String toString() {
         String outString = "[";
         // 2D array nested loops, used for reference
         for (int row = 0; row < lights.length; row++) {
             for (int col = 0; col < lights[row].length; col++) {
-                outString += 
-                // data
-                "{" + 
-                "\"row\": " + row + "," +
-                "\"column\": " + col + "," +
-                "\"light\": " + lights[row][col] +   // extract toString data
-                "}," ;
+                outString +=
+                        // data
+                        "{" +
+                                "\"row\": " + row + "," +
+                                "\"column\": " + col + "," +
+                                "\"light\": " + lights[row][col] + // extract toString data
+                                "},";
             }
         }
         // remove last comma, newline, add square bracket, reset color
-        outString = outString.substring(0,outString.length() - 1) + "]";
-		return outString;
+        outString = outString.substring(0, outString.length() - 1) + "]";
+        return outString;
     }
 
     /* Output is intended for Terminal, effects added to output */
-    public String toTerminal() { 
+    public String toTerminal() {
         String outString = "[";
         // 2D array nested loops, used for reference
         for (int row = 0; row < lights.length; row++) {
             for (int col = 0; col < lights[row].length; col++) {
-                outString += 
-                // reset
-                "\033[m" +
-                
-                // color
-                "\033[38;2;" + 
-                lights[row][col].getRed() + ";" +  // set color using getters
-                lights[row][col].getGreen() + ";" +
-                lights[row][col].getBlue() + ";" +
-                lights[row][col].getEffect() + "m" +
-                // data, extract custom getters
-                "{" +
-                "\"" + "RGB\": " + "\"" + lights[row][col].getRGB() + "\"" +
-                "," +
-                "\"" + "Effect\": " + "\"" + lights[row][col].getEffectTitle() + "\"" +
-                "}," +
-                // newline
-                "\n" ;
+                outString +=
+                        // reset
+                        "\033[m" +
+
+                        // color
+                                "\033[38;2;" +
+                                lights[row][col].getRed() + ";" + // set color using getters
+                                lights[row][col].getGreen() + ";" +
+                                lights[row][col].getBlue() + ";" +
+                                lights[row][col].getEffect() + "m" +
+                                // data, extract custom getters
+                                "{" +
+                                "\"" + "RGB\": " + "\"" + lights[row][col].getRGB() + "\"" +
+                                "," +
+                                "\"" + "Effect\": " + "\"" + lights[row][col].getEffectTitle() + "\"" +
+                                "}," +
+                                // newline
+                                "\n";
             }
         }
         // remove last comma, newline, add square bracket, reset color
-        outString = outString.substring(0,outString.length() - 2) + "\033[m" + "]";
-		return outString;
+        outString = outString.substring(0, outString.length() - 2) + "\033[m" + "]";
+        return outString;
     }
 
     /* Output is intended for Terminal, draws color palette */
     public String toColorPalette() {
         // block sizes
-        final int ROWS = 5;
-        final int COLS = 10;
+        final int ROWS = 8;
+        final int COLS = 9;
 
         // Build large string for entire color palette
         String outString = "";
@@ -85,28 +86,28 @@ public class LightBoard {
                     // repeat each column for block size
                     for (int j = 0; j < COLS; j++) {
                         // print single character, except at midpoint print color code
-                        String c = (i == (int) (ROWS / 2) && j == (int) (COLS / 2) ) 
-                            ? lights[row][col].getRGB()
-                            : (j == (int) (COLS / 2))  // nested ternary
-                            ? " ".repeat(lights[row][col].getRGB().length())
-                            : " ";
+                        String c = (i == (int) (ROWS / 2) && j == (int) (COLS / 2))
+                                ? lights[row][col].getRGB()
+                                : (j == (int) (COLS / 2)) // nested ternary
+                                        ? " ".repeat(lights[row][col].getRGB().length())
+                                        : " ";
 
-                        outString += 
-                        // reset
-                        "\033[m" +
-                        
-                        // color
-                        "\033[38;2;" + 
-                        lights[row][col].getRed() + ";" +
-                        lights[row][col].getGreen() + ";" +
-                        lights[row][col].getBlue() + ";" +
-                        "7m" +
+                        outString +=
+                                // reset
+                                "\033[m" +
 
-                        // color code or blank character
-                        c +
+                                // color
+                                        "\033[38;2;" +
+                                        lights[row][col].getRed() + ";" +
+                                        lights[row][col].getGreen() + ";" +
+                                        lights[row][col].getBlue() + ";" +
+                                        "7m" +
 
-                        // reset
-                        "\033[m";
+                                        // color code or blank character
+                                        c +
+
+                                        // reset
+                                        "\033[m";
                     }
                 }
                 outString += "\n";
@@ -114,14 +115,42 @@ public class LightBoard {
         }
         // remove last comma, newline, add square bracket, reset color
         outString += "\033[m";
-		return outString;
+        return outString;
     }
+
+    // Has an input for the color values instead of Math.random 
+    public void changeValues() 
+    {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Red rbg value");
+        Short red = sc.nextShort();     // closes scanner for red values
+
+        System.out.println("Green rbg value");
+        Short green = sc.nextShort();  // closes scanner for green values
+
+        System.out.println("Blue rbg value");
+        Short blue = sc.nextShort();   // closes scanner for red values
+
+        System.out.println("Column of cell color to change");
+        int col = sc.nextInt();   // closes scanner for column value
+
+        System.out.println("Row of cell color to change");
+        int row = sc.nextInt();   // closes scanner for row values
+
+        lights[row][col].setRGB(red, green, blue);
+
+        sc.close();
     
+    }
+
     static public void main(String[] args) {
         // create and display LightBoard
-        LightBoard lightBoard = new LightBoard(5, 5);
-        System.out.println(lightBoard);  // use toString() method
+        LightBoard lightBoard = new LightBoard(9, 9);
+        System.out.println(lightBoard); // use toString() method
         System.out.println(lightBoard.toTerminal());
+        lightBoard.changeValues();
         System.out.println(lightBoard.toColorPalette());
     }
 }
